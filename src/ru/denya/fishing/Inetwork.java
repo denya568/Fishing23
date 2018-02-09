@@ -66,8 +66,8 @@ public class Inetwork {
                     path[0] = url.getPath();
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
-                    conn.setConnectTimeout(120000);
-                    conn.setReadTimeout(120000);
+                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(5000);
                     conn.connect();
 
                     //InputStreamReader in = new InputStreamReader(conn.getInputStream(), "Windows-1251");
@@ -89,6 +89,12 @@ public class Inetwork {
                     conn.disconnect();
                     br.close();
                     in.close();
+                } catch (ConnectException ce) {
+                    responceCode[0] = "404";
+                    responceMessage[0] = "ce";
+                } catch (UnknownHostException ue) {
+                    responceCode[0] = "404";
+                    responceMessage[0] = "uhe";
                 } catch (Exception e) {
                     responceCode[0] = "404";
                     responceMessage[0] = e.toString();
