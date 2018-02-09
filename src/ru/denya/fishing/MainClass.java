@@ -49,14 +49,8 @@ public class MainClass {
             Search search = new Search();
             search.startSearch(protocol, host);
 
-
             endTime = (int) System.currentTimeMillis();
             System.out.println("Готово! Прошло " + (endTime - startTime)/1000 + "с. или " + (endTime - startTime)/1000/60 + "мин. ");
-
-            //System.out.println(search.getDiscoverSite());
-
-
-
 
 
         } else {

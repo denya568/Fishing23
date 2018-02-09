@@ -3,6 +3,7 @@ package ru.denya.fishing;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Search {
@@ -26,28 +27,6 @@ public class Search {
         return domenLibrary().size();
     }
 
-    private void discoverFile(String txt) {
-        try {
-            File folder = new File("D://fishing23//");
-            if (!folder.exists()) {
-                boolean created = folder.mkdir();
-                if (created) {
-                    //ok
-                }
-            }
-            File file = new File(folder, "asd.txt");
-            FileWriter fw = new FileWriter(file, true);
-            if (!file.exists()) {
-                file.createNewFile();
-                fw.append(txt + "\r\n");
-            } else {
-                fw.write(txt + "\r\n");
-            }
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     static int fuctorial(int n) {
         return (n > 0) ? n * fuctorial(n - 1) : 1;
@@ -130,7 +109,6 @@ public class Search {
 
     private static ArrayList<String> generateCopies(ArrayList<String> list) {
         ArrayList<String> arr = new ArrayList<>();
-
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < copyNameLibrary().size(); j++) {
                 if (list.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value1)) {
@@ -162,7 +140,6 @@ public class Search {
                 arr.add(getTxt(list));
             }
         }
-
 
         return arr;
     }
@@ -177,10 +154,14 @@ public class Search {
     }
 
     public void startSearch(String protocol, String host) {
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy_HH.mm_zzz");
+        final String sDate = getHostName(host) + "-" + simpleDateFormat.format(date);
+
         loadNameLibrary(host);
         int all = protocolLibrary().size() * nameLibrary.size() * domenLibrary().size();
 
-        /*for (int i = 0; i < protocolLibrary().size(); i++) {
+        for (int i = 0; i < protocolLibrary().size(); i++) {
             for (int j = 0; j < nameLibrary.size(); j++) {
                 for (int k = 0; k < domenLibrary().size(); k++) {
 
@@ -192,22 +173,80 @@ public class Search {
                         public void run() {
                             Inetwork inetwork = new Inetwork();
                             inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
-                            if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
-                                System.out.println("Найден: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode());
-                                discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
-                            } else {
-                                System.out.println("Проверка: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
-                            }
+
+                            /*if (inetwork.getResponceMessage().equalsIgnoreCase("ConnectException")) {
+                                while (inetwork.getResponceMessage().equalsIgnoreCase("ConnectException")) {
+                                    inetwork = new Inetwork();
+                                    inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
+                                }
+                            }*/
+
+                            {//-------
+                                if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
+                                    System.out.println("Найден: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode());
+                                    suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK), sDate);
+
+                                } else {
+                                    System.out.println("Проверка: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
+                                }
+                                writeLog(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode(), sDate);
+                            }//-------
+
                         }
                     });
                     th.start();
 
 
-
-
                 }
             }
-        }*/
+        }
+    }
+
+
+    private void writeLog(String txt, String date) {
+        try {
+            File folder = new File("D://fishing23/" + date + "//");
+            if (!folder.exists()) {
+                boolean created = folder.mkdir();
+                if (created) {
+                    //ok
+                }
+            }
+            File file = new File(folder, "log.txt");
+            FileWriter fw = new FileWriter(file, true);
+            if (!file.exists()) {
+                file.createNewFile();
+                fw.append(txt + "\r\n");
+            } else {
+                fw.write(txt + "\r\n");
+            }
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void suspectFile(String txt, String date) {
+        try {
+            File folder = new File("D://fishing23/" + date + "//");
+            if (!folder.exists()) {
+                boolean created = folder.mkdir();
+                if (created) {
+                    //ok
+                }
+            }
+            File file = new File(folder, "suspectSites.txt");
+            FileWriter fw = new FileWriter(file, true);
+            if (!file.exists()) {
+                file.createNewFile();
+                fw.append(txt + "\r\n");
+            } else {
+                fw.write(txt + "\r\n");
+            }
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static String getHostDomen(String host) {

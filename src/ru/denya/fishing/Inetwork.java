@@ -5,8 +5,10 @@ import org.jsoup.nodes.Document;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ public class Inetwork {
     }
 
     private String responceCode;
+    private String responceMessage;
     private String title;
     private String protocol;
     private String host;
@@ -36,6 +39,10 @@ public class Inetwork {
         return responceCode;
     }
 
+    public String getResponceMessage() {
+        return responceMessage;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -45,6 +52,7 @@ public class Inetwork {
         final String[] host = {""};
         final String[] path = {""};
         final String[] responceCode = {""};
+        final String[] responceMessage = {""};
         final String[] title = {""};
 
         Thread thread = new Thread(new Runnable() {
@@ -73,6 +81,7 @@ public class Inetwork {
                     }
                     text = sb.toString();
                     responceCode[0] = String.valueOf(conn.getResponseCode());
+                    responceMessage[0] = String.valueOf(conn.getResponseMessage());
 
                     Document doc = Jsoup.parse(text);
                     title[0] = doc.title();
@@ -82,6 +91,7 @@ public class Inetwork {
                     in.close();
                 } catch (Exception e) {
                     responceCode[0] = "404";
+                    responceMessage[0] = e.toString();
                 }
 
 
@@ -97,6 +107,7 @@ public class Inetwork {
         this.host = host[0];
         this.path = path[0];
         this.responceCode = responceCode[0];
+        this.responceMessage = responceMessage[0];
         this.title = title[0];
 
     }
