@@ -84,14 +84,12 @@ public class Search {
             for (int j = 0; j < copyNameLibrary().size(); j++) {
                 if (list.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value1)) {
                     list.set(i, copyNameLibrary().get(j).value2);
-                    System.out.println(copyNameLibrary().get(j).value1 + " = " + copyNameLibrary().get(j).value2);
                     copyNameLibraryHashSet.add(getTxt(list));
                     copyNameLibraryHashSet.addAll(generateCopies(list));
                     list.set(i, arr[i]);
                 }
                 if (list.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value2)) {
                     list.set(i, copyNameLibrary().get(j).value1);
-                    System.out.println(copyNameLibrary().get(j).value2 + " = " + copyNameLibrary().get(j).value1);
                     copyNameLibraryHashSet.add(getTxt(list));
                     copyNameLibraryHashSet.addAll(generateCopies(list));
                     list.set(i, arr[i]);
@@ -153,13 +151,19 @@ public class Search {
         return asd;
     }
 
-    public void startSearch(String protocol, String host) {
+    public void startSearch(String protocol, String host, int frequency, String title) {
         Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy_HH.mm_zzz");
-        final String sDate = getHostName(host) + "-" + simpleDateFormat.format(date);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy_HH.mm_zzz");
+        //final String sDate = getHostName(host) + "-" + simpleDateFormat.format(date);
+        final String sDate = host + "-" + simpleDateFormat.format(date);
+        double step = 0;
+        int temp = -1;
 
         loadNameLibrary(host);
-        int all = protocolLibrary().size() * nameLibrary.size() * domenLibrary().size();
+        double all = protocolLibrary().size() * nameLibrary.size() * domenLibrary().size();
+        int frq = 1000 / frequency;
+        frq = (int) (all / frq) / 60;
+        System.out.println("Сканирование продлится около " +frq + " мин.");
 
         for (int i = 0; i < protocolLibrary().size(); i++) {
             for (int j = 0; j < nameLibrary.size(); j++) {
@@ -168,44 +172,55 @@ public class Search {
                     int finalI = i;
                     int finalJ = j;
                     int finalK = k;
+
+                    try {
+                        Thread.sleep(frequency);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    int finalStep = (int) step;
                     Thread th = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             Inetwork inetwork = new Inetwork();
                             inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
 
-                            /*if (inetwork.getResponceMessage().equalsIgnoreCase("ConnectException")) {
-                                while (inetwork.getResponceMessage().equalsIgnoreCase("ConnectException")) {
-                                    inetwork = new Inetwork();
-                                    inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
+                            if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
+                                //System.out.println("Найден: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode());
+                                suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK), sDate);
+                                if (inetwork.getTitle().equalsIgnoreCase(title)) {
+                                    discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + title, sDate);
                                 }
-                            }*/
 
-                            {//-------
-                                if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
-                                    System.out.println("Найден: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode());
-                                    suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK), sDate);
-
-                                } else {
-                                    System.out.println("Проверка: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
-                                }
-                                writeLog(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode(), sDate);
-                            }//-------
+                            } else {
+                                //System.out.println("Проверка: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
+                            }
+                            writeLog(finalStep + ": " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode(), sDate);
 
                         }
                     });
                     th.start();
+                    step++;
+                    double percent = (step / all);
+                    percent = percent * 100;
 
+                    if ((int) (percent) > temp) {
+                        temp = (int) percent;
+                        System.out.println(temp + "%");
+                    }
 
                 }
             }
         }
     }
 
+    private Properties p = System.getProperties();
+    private final String dir = p.getProperty("user.dir") + "//";
 
     private void writeLog(String txt, String date) {
         try {
-            File folder = new File("D://fishing23/" + date + "//");
+            File folder = new File(dir + date + "//");
             if (!folder.exists()) {
                 boolean created = folder.mkdir();
                 if (created) {
@@ -228,7 +243,7 @@ public class Search {
 
     private void suspectFile(String txt, String date) {
         try {
-            File folder = new File("D://fishing23/" + date + "//");
+            File folder = new File(dir + date + "//");
             if (!folder.exists()) {
                 boolean created = folder.mkdir();
                 if (created) {
@@ -236,6 +251,29 @@ public class Search {
                 }
             }
             File file = new File(folder, "suspectSites.txt");
+            FileWriter fw = new FileWriter(file, true);
+            if (!file.exists()) {
+                file.createNewFile();
+                fw.append(txt + "\r\n");
+            } else {
+                fw.write(txt + "\r\n");
+            }
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void discoverFile(String txt, String date) {
+        try {
+            File folder = new File(dir + date + "//");
+            if (!folder.exists()) {
+                boolean created = folder.mkdir();
+                if (created) {
+                    //ok
+                }
+            }
+            File file = new File(folder, "discoverSites.txt");
             FileWriter fw = new FileWriter(file, true);
             if (!file.exists()) {
                 file.createNewFile();

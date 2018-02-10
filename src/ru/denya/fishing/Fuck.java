@@ -1,16 +1,22 @@
 package ru.denya.fishing;
 
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
 
 public class Fuck {
     public static void main(String[] args) {
 
-        Inetwork inetwork = new Inetwork();
-        inetwork.loadPage("https://yand1ex.ru/");
-        System.out.println(inetwork.getResponceCode());
-        System.out.println(inetwork.getResponceMessage()); //404, ue
+        Properties p = System.getProperties();
+        String dir = p.getProperty("user.dir");
+        System.out.println(dir);
+
+        File file = new File(dir + "/asd.txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
     }
