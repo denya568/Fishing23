@@ -151,11 +151,34 @@ public class Search {
         return asd;
     }
 
-    public void startSearch(String protocol, String host, int frequency, String title) {
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy_HH.mm_zzz");
-        //final String sDate = getHostName(host) + "-" + simpleDateFormat.format(date);
-        final String sDate = host + "-" + simpleDateFormat.format(date);
+    private ArrayList<String> replaceTitles(String title) {
+        //проверка title
+        int startCh = 0;
+        ArrayList<String> titles = new ArrayList<>();
+        for (int i = 0; i < title.length(); i++) {
+            String txt = "";
+            if (title.charAt(i) == ' ' || title.charAt(i) == ',' || title.charAt(i) == '.') {
+                for (int j = startCh; j < i; j++) {
+                    txt += title.charAt(j);
+                }
+                titles.add(txt);
+                txt = "";
+                startCh = i;
+            }
+        }
+        String txt = "";
+        for (int i = startCh; i < title.length(); i++) {
+            txt += title.charAt(i);
+        }
+        titles.add(txt);
+        txt = "";
+        return titles;
+    }
+
+    public void startSearch(String protocol, String host, int frequency, String title, String sDate) {
+        ArrayList<String> mainTitle = new ArrayList<>();
+        mainTitle = replaceTitles(title);
+
         double step = 0;
         int temp = -1;
 
@@ -163,7 +186,7 @@ public class Search {
         double all = protocolLibrary().size() * nameLibrary.size() * domenLibrary().size();
         int frq = 1000 / frequency;
         frq = (int) (all / frq) / 60;
-        System.out.println("Сканирование продлится около " +frq + " мин.");
+        System.out.println("Сканирование продлится около " + frq + " мин.");
 
         for (int i = 0; i < protocolLibrary().size(); i++) {
             for (int j = 0; j < nameLibrary.size(); j++) {
@@ -180,6 +203,7 @@ public class Search {
                     }
 
                     int finalStep = (int) step;
+                    ArrayList<String> finalMainTitle = mainTitle;
                     Thread th = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -188,19 +212,27 @@ public class Search {
 
                             if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
                                 //System.out.println("Найден: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode());
-                                suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK), sDate);
+                                suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
                                 if (inetwork.getTitle().equalsIgnoreCase(title)) {
-                                    discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + title, sDate);
+                                    discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
                                 }
 
-                            } else {
-                                //System.out.println("Проверка: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
-                            }
-                            writeLog(finalStep + ": " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode(), sDate);
+                                ArrayList<String> inetTitle = new ArrayList<>();
+                                inetTitle = replaceTitles(inetwork.getTitle());
 
+                                for (int l = 0; l < finalMainTitle.size(); l++) {
+                                    for (int m = 0; m < inetTitle.size(); m++) {
+                                        if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m))) {
+                                            discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                        }
+                                    }
+                                }
+                            }
+                            writeLog(finalStep + ": " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
                         }
                     });
                     th.start();
+
                     step++;
                     double percent = (step / all);
                     percent = percent * 100;
