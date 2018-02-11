@@ -1,7 +1,6 @@
 package ru.denya.fishing;
 
 import java.io.*;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -18,7 +17,7 @@ public class MainClass {
     public static int frequency;
 
     public static void main(String[] args) {
-        System.out.println("Введите адрес:\n   (http://google.com)");
+        System.out.println("Введите адрес:\n   (https://google.com)");
         Scanner sc = new Scanner(System.in);
         addres = sc.nextLine();
         System.out.println("Введите скорость проверки: (кол-во ссылок/секунду) PS: не больше 1000 и не меньше 1\n   (23)");
@@ -62,7 +61,13 @@ public class MainClass {
             endTime = (int) System.currentTimeMillis();
             updateDiscoverSitesFile(sDate);
 
-            System.out.println("Готово! Прошло " + (endTime - startTime) / 1000 + "с. или " + (endTime - startTime) / 1000 / 60 + "мин. ");
+            int time = (endTime - startTime) / 1000;
+            if (time/60 > 0) {
+                System.out.println("Готово! Прошло " + time / 60 + " мин.");
+            } else {
+                System.out.println("Готово! Прошло " + time + "с.");
+            }
+
         } else {
             System.err.println("Данный сайт не доступен\n " + inetwork.getResponceCode());
         }

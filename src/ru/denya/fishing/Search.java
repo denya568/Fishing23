@@ -3,7 +3,6 @@ package ru.denya.fishing;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Search {
@@ -98,11 +97,7 @@ public class Search {
             }
         }
 
-        //System.out.println(copyNameLibraryHashSet.size());
-        //System.out.println(copyNameLibraryHashSet);
-
         nameLibrary.addAll(copyNameLibraryHashSet);
-        //System.out.println(nameLibrary.size());
     }
 
     private static ArrayList<String> generateCopies(ArrayList<String> list) {
@@ -185,8 +180,13 @@ public class Search {
         loadNameLibrary(host);
         double all = protocolLibrary().size() * nameLibrary.size() * domenLibrary().size();
         int frq = 1000 / frequency;
-        frq = (int) (all / frq) / 60;
-        System.out.println("Сканирование продлится около " + frq + " мин.");
+        frq = (int) (all / frq);
+        if (frq / 60 > 0) {
+            System.out.println("Сканирование продлится около " + (frq / 60) + " мин.");
+        } else {
+            System.out.println("Сканирование продлится около " + frq + " c.");
+        }
+
 
         for (int i = 0; i < protocolLibrary().size(); i++) {
             for (int j = 0; j < nameLibrary.size(); j++) {

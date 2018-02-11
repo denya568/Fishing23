@@ -2,15 +2,12 @@ package ru.denya.fishing;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Inetwork {
     public Inetwork() {
@@ -61,9 +58,7 @@ public class Inetwork {
         final String[] responceCode = {""};
         final String[] responceMessage = {""};
         final String[] title = {""};
-        final String[] title2 = {""};
         final String[] txt = {""};
-        final String[] txt2 = {""};
 
         Thread thread = new Thread(new Runnable() {
             @Override
