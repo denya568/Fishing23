@@ -3,7 +3,7 @@ package ru.denya.fishing;
 public class Fuck {
     public static void main(String[] args) {
 
-        String q = "вконтакте";
+        /*String q = "вконтакте";
         int num = 5;
 
         Inetwork iw = new Inetwork();
@@ -12,7 +12,10 @@ public class Fuck {
         iw.loadPage("https://www.google.ru/search?q=%D0%B2%D0%BA%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%B5&amp");
         System.out.println(iw.getTitle());
         System.out.println(iw.getTxt());
-        System.out.println(iw.getResponceCode());
+        System.out.println(iw.getResponceCode());*/
+
+
+
 
 
     }

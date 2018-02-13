@@ -18,8 +18,8 @@ public class MainClass {
         int frequency = Integer.parseInt(args[1]);
         final String sDate = args[2];
 
-        /*String addres = "https://vk.com";
-        int frequency = 50 ;
+        /*String addres = "https://ya.ru";
+        int frequency = 150 ;
         final String sDate = "D:/asd";*/
 
         System.out.println(addres + "  (" + frequency + " links/second)");
@@ -47,7 +47,7 @@ public class MainClass {
             while (Thread.activeCount() > thCount) {
             }
             endTime = (int) System.currentTimeMillis();
-            updateDiscoverSitesFile(sDate);
+            updateDiscoverSitesFile(sDate, addres);
 
             int time = (endTime - startTime) / 1000;
             if (time / 60 > 0) {
@@ -62,7 +62,7 @@ public class MainClass {
 
     }
 
-    private static void updateDiscoverSitesFile(String date) {
+    private static void updateDiscoverSitesFile(String date, String mainSite) {
         Set<String> arr = new HashSet<>();
         ArrayList<String> list = new ArrayList<>();
         try {
@@ -76,7 +76,9 @@ public class MainClass {
             BufferedReader br = new BufferedReader(new FileReader(folder + "/discoverSites.txt"));
             String line;
             while ((line = br.readLine()) != null) {
-                arr.add(line);
+                if (!line.startsWith(mainSite)) {
+                    arr.add(line);
+                }
             }
             br.close();
             list.addAll(arr);
@@ -85,11 +87,14 @@ public class MainClass {
             file.delete();
             file.createNewFile();
 
-            FileWriter fw = new FileWriter(file, true);
+            FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+            BufferedWriter bw = new BufferedWriter(outputStreamWriter);
             for (int i = 0; i < list.size(); i++) {
-                fw.write(list.get(i) + "\r\n");
+                bw.write(list.get(i) + "\r\n");
+                bw.flush();
+                bw.close();
             }
-            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

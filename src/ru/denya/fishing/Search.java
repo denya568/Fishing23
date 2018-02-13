@@ -1,8 +1,6 @@
 package ru.denya.fishing;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Search {
@@ -259,17 +257,22 @@ public class Search {
                 }
             }
             File file = new File(folder, "progress.txt");
-            FileWriter fw = new FileWriter(file, false);
             if (!file.exists()) {
                 file.createNewFile();
-                fw.write(txt);
-                fw.flush();
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
+                bw.flush();
+                bw.close();
             } else {
-                fw.write(txt);
-                fw.flush();
+                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
+                bw.flush();
+                bw.close();
             }
-            fw.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -285,14 +288,22 @@ public class Search {
                 }
             }
             File file = new File(folder, "log.txt");
-            FileWriter fw = new FileWriter(file, true);
             if (!file.exists()) {
                 file.createNewFile();
-                fw.append(txt + "\r\n");
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
+                bw.flush();
+                bw.close();
             } else {
-                fw.write(txt + "\r\n");
+                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
+                bw.flush();
+                bw.close();
             }
-            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -308,14 +319,22 @@ public class Search {
                 }
             }
             File file = new File(folder, "suspectSites.txt");
-            FileWriter fw = new FileWriter(file, true);
             if (!file.exists()) {
                 file.createNewFile();
-                fw.append(txt + "\r\n");
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
+                bw.flush();
+                bw.close();
             } else {
-                fw.write(txt + "\r\n");
+                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
+                bw.flush();
+                bw.close();
             }
-            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -331,14 +350,22 @@ public class Search {
                 }
             }
             File file = new File(folder, "discoverSites.txt");
-            FileWriter fw = new FileWriter(file, true);
             if (!file.exists()) {
                 file.createNewFile();
-                fw.append(txt + "\r\n");
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
+                bw.flush();
+                bw.close();
             } else {
-                fw.write(txt + "\r\n");
+                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
+                bw.flush();
+                bw.close();
             }
-            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
