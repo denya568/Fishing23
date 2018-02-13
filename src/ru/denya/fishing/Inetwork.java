@@ -18,7 +18,6 @@ public class Inetwork {
     private String title;
     private String title2;
     private String txt;
-    private String txt2;
     private String protocol;
     private String host;
     private String path;

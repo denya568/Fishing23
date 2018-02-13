@@ -179,6 +179,7 @@ public class Search {
 
         loadNameLibrary(host);
         double all = protocolLibrary().size() * nameLibrary.size() * domenLibrary().size();
+
         int frq = 1000 / frequency;
         frq = (int) (all / frq);
         if (frq / 60 > 0) {
@@ -247,12 +248,9 @@ public class Search {
         }
     }
 
-    private Properties p = System.getProperties();
-    private final String dir = p.getProperty("user.dir") + "//";
-
     private void writeLog(String txt, String date) {
         try {
-            File folder = new File(dir + date + "//");
+            File folder = new File( date + "//");
             if (!folder.exists()) {
                 boolean created = folder.mkdir();
                 if (created) {
@@ -275,7 +273,7 @@ public class Search {
 
     private void suspectFile(String txt, String date) {
         try {
-            File folder = new File(dir + date + "//");
+            File folder = new File( date + "//");
             if (!folder.exists()) {
                 boolean created = folder.mkdir();
                 if (created) {
@@ -298,7 +296,7 @@ public class Search {
 
     private void discoverFile(String txt, String date) {
         try {
-            File folder = new File(dir + date + "//");
+            File folder = new File( date + "//");
             if (!folder.exists()) {
                 boolean created = folder.mkdir();
                 if (created) {

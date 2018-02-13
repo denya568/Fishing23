@@ -1,42 +1,34 @@
 package ru.denya.fishing;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MainClass {
     private static String line() {
         String a = "";
-        for (int i = 0; i < 23; i++) {
+        for (int i = 0; i < 10; i++) {
             a += "-";
         }
         return a;
     }
 
-    public static String addres;
-    public static int frequency;
-
     public static void main(String[] args) {
-        System.out.println("Введите адрес:\n   (https://google.com)");
-        Scanner sc = new Scanner(System.in);
-        addres = sc.nextLine();
-        System.out.println("Введите скорость проверки: (кол-во ссылок/секунду) PS: не больше 1000 и не меньше 1\n   (23)");
-        Scanner sc2 = new Scanner(System.in);
-        frequency = sc2.nextInt();
-        System.out.println("Проверяемый адрес: " + addres + "\nСкорость: " + frequency + " links/second");
-        System.out.println(line());
 
+        /*String addres = args[0] = "https://vk.com";
+        int frequency = Integer.parseInt(args[1] = "50");
+        final String sDate = args[2] = "D:/asd";*/
+
+        String addres = "https://vk.com";
+        int frequency = 50 ;
+        final String sDate = "D:/asd";
+
+        System.out.println(addres + "  (" + frequency + " links/second)");
         int thCount = Thread.activeCount();
 
-        //frequency = 180;
         frequency = 1000 / frequency;
         Inetwork inetwork = new Inetwork();
         int startTime = (int) System.currentTimeMillis();
         inetwork.loadPage(addres);
-        //inetwork.loadPage("https://google.com/");
-        //inetwork.loadPage("https://hack-dag.ru");
-        //inetwork.loadPage("https://vk.com/");
-        //inetwork.loadPage("https://yandex.ru");
         if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
             int endTime = (int) System.currentTimeMillis();
             String host = inetwork.getHost();
@@ -49,10 +41,6 @@ public class MainClass {
             System.out.println("Path: " + inetwork.getPath());
             System.out.println(line() + " Поиск фишиг-сайтов " + line());
 
-            Date date = new Date();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy_HH.mm_zzz");
-            final String sDate = host + "-" + simpleDateFormat.format(date);
-
             Search search = new Search();
             search.startSearch(protocol, host, frequency, title, sDate);
 
@@ -62,7 +50,7 @@ public class MainClass {
             updateDiscoverSitesFile(sDate);
 
             int time = (endTime - startTime) / 1000;
-            if (time/60 > 0) {
+            if (time / 60 > 0) {
                 System.out.println("Готово! Прошло " + time / 60 + " мин.");
             } else {
                 System.out.println("Готово! Прошло " + time + "с.");
@@ -74,14 +62,11 @@ public class MainClass {
 
     }
 
-    private static Properties p = System.getProperties();
-    private static final String dir = p.getProperty("user.dir") + "//";
-
     private static void updateDiscoverSitesFile(String date) {
         Set<String> arr = new HashSet<>();
         ArrayList<String> list = new ArrayList<>();
         try {
-            File folder = new File(dir + date + "//");
+            File folder = new File(date + "//");
             if (!folder.exists()) {
                 boolean created = folder.mkdir();
                 if (created) {
