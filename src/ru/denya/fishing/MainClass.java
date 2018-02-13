@@ -14,13 +14,13 @@ public class MainClass {
 
     public static void main(String[] args) {
 
-        /*String addres = args[0] = "https://vk.com";
-        int frequency = Integer.parseInt(args[1] = "50");
-        final String sDate = args[2] = "D:/asd";*/
+        String addres = args[0];
+        int frequency = Integer.parseInt(args[1]);
+        final String sDate = args[2];
 
-        String addres = "https://vk.com";
+        /*String addres = "https://vk.com";
         int frequency = 50 ;
-        final String sDate = "D:/asd";
+        final String sDate = "D:/asd";*/
 
         System.out.println(addres + "  (" + frequency + " links/second)");
         int thCount = Thread.activeCount();

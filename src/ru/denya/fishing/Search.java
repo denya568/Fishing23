@@ -241,6 +241,7 @@ public class Search {
                     if ((int) (percent) > temp) {
                         temp = (int) percent;
                         System.out.println(temp + "%");
+                        writePercent(String.valueOf(temp)+"%", sDate);
                     }
 
                 }
@@ -248,9 +249,35 @@ public class Search {
         }
     }
 
+    private void writePercent(String txt, String date) {
+        try {
+            File folder = new File(date + "//");
+            if (!folder.exists()) {
+                boolean created = folder.mkdir();
+                if (created) {
+                    //ok
+                }
+            }
+            File file = new File(folder, "progress.txt");
+            FileWriter fw = new FileWriter(file, false);
+            if (!file.exists()) {
+                file.createNewFile();
+                fw.write(txt);
+                fw.flush();
+            } else {
+                fw.write(txt);
+                fw.flush();
+            }
+            fw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void writeLog(String txt, String date) {
         try {
-            File folder = new File( date + "//");
+            File folder = new File(date + "//");
             if (!folder.exists()) {
                 boolean created = folder.mkdir();
                 if (created) {
@@ -273,7 +300,7 @@ public class Search {
 
     private void suspectFile(String txt, String date) {
         try {
-            File folder = new File( date + "//");
+            File folder = new File(date + "//");
             if (!folder.exists()) {
                 boolean created = folder.mkdir();
                 if (created) {
@@ -296,7 +323,7 @@ public class Search {
 
     private void discoverFile(String txt, String date) {
         try {
-            File folder = new File( date + "//");
+            File folder = new File(date + "//");
             if (!folder.exists()) {
                 boolean created = folder.mkdir();
                 if (created) {
