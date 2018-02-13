@@ -14,13 +14,13 @@ public class MainClass {
 
     public static void main(String[] args) {
 
-        String addres = args[0];
+        /*String addres = args[0];
         int frequency = Integer.parseInt(args[1]);
-        final String sDate = args[2];
+        final String sDate = args[2];*/
 
-        /*String addres = "https://ya.ru";
+        String addres = "https://ya.ru";
         int frequency = 150 ;
-        final String sDate = "D:/asd";*/
+        final String sDate = "D:/asd";
 
         System.out.println(addres + "  (" + frequency + " links/second)");
         int thCount = Thread.activeCount();
@@ -58,8 +58,41 @@ public class MainClass {
 
         } else {
             System.err.println("Данный сайт не доступен\n " + inetwork.getResponceCode());
+            err(sDate, "Данный сайт не доступен");
         }
 
+    }
+
+    private static void err(String date, String txt) {
+        try {
+            File folder = new File(date + "//");
+            if (!folder.exists()) {
+                boolean created = folder.mkdir();
+                if (created) {
+                    //ok
+                }
+            }
+            File file = new File(folder, "/discoverSites.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt);
+                bw.flush();
+                bw.close();
+
+            } else {
+                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt);
+                bw.flush();
+                bw.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void updateDiscoverSitesFile(String date, String mainSite) {
@@ -83,17 +116,28 @@ public class MainClass {
             br.close();
             list.addAll(arr);
 
-            File file = new File(folder, "discoverSites.txt");
-            file.delete();
-            file.createNewFile();
-
-            FileOutputStream fileOutputStream = new FileOutputStream(file, false);
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
-            BufferedWriter bw = new BufferedWriter(outputStreamWriter);
-            for (int i = 0; i < list.size(); i++) {
-                bw.write(list.get(i) + "\r\n");
-                bw.flush();
-                bw.close();
+            File file = new File(folder + "/discoverSites.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                for (int i = 0; i < list.size(); i++) {
+                    bw.write(list.get(i) + "\r\n");
+                    bw.flush();
+                    bw.close();
+                }
+            } else {
+                file.delete();
+                file.createNewFile();
+                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                for (int i = 0; i < list.size(); i++) {
+                    bw.write(list.get(i) + "\r\n");
+                    bw.flush();
+                    bw.close();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

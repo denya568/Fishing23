@@ -266,7 +266,7 @@ public class Search {
                 bw.flush();
                 bw.close();
             } else {
-                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
                 BufferedWriter bw = new BufferedWriter(outputStreamWriter);
                 bw.write(txt + "\r\n");
