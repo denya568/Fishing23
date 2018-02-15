@@ -29,32 +29,49 @@ public class Search {
         return (n > 0) ? n * fuctorial(n - 1) : 1;
     }
 
-    private void loadNameLibrary(String host) {
-        String name = getHostName(host);
-        String[] arr = new String[name.length()];
-        for (int i = 0; i < name.length(); i++) {
-            arr[i] = String.valueOf(name.charAt(i));
+    private ArrayList<String> generateWords(String word) {
+        ArrayList<String> words = new ArrayList<>();
+
+        String[] arr = new String[word.length()];
+        for (int i = 0; i < word.length(); i++) {
+            arr[i] = String.valueOf(word.charAt(i));
         }
+
         int size = arr.length;
-        int temp = 0;
         Set<String> nameLibraryHashSet = new HashSet<>();
         ArrayList<String> list = new ArrayList<>();
-
-        //подсчет повторений
         for (int i = 0; i < size; i++) {
             list.add(arr[i]);
-            for (int j = 0; j < size; j++) {
-                if (arr[i].equalsIgnoreCase(arr[j]) && (i != j)) {
+        }
+        //подсчет повторений ===>
+        Set<String> hTemp = new HashSet<>();
+        hTemp.addAll(list);
+        List<String> sTemp = new ArrayList<>();
+        sTemp.addAll(hTemp);
+        ArrayList<Sample> ident = new ArrayList<>();
+
+        int temp = 0;
+        for (int i = 0; i < sTemp.size(); i++) {
+            for (int j = 0; j < list.size(); j++) {
+                if (sTemp.get(i).equalsIgnoreCase(list.get(j))) {
                     temp++;
                 }
             }
+            ident.add(new Sample(temp, sTemp.get(i)));
+            temp = 0;
         }
-
+        temp = 1;
+        for (int i = 0; i < ident.size(); i++) {
+            temp *= fuctorial(ident.get(i).i);
+        }
         if (temp == 0) {
             temp = 1;
         }
+        //подсчет повторений <===
+
         int max = fuctorial(arr.length) / temp;
         while (nameLibraryHashSet.size() < max) {
+
             Collections.swap(list, 0, 1);
             nameLibraryHashSet.add(getTxt(list));
 
@@ -70,69 +87,114 @@ public class Search {
             Collections.shuffle(list);
             nameLibraryHashSet.add(getTxt(list));
         }
-        nameLibrary.addAll(nameLibraryHashSet);
+        words.addAll(nameLibraryHashSet);
 
-        list.removeAll(list);
-        for (int i = 0; i < size; i++) {
-            list.add(arr[i]);
-        }
-        Set<String> copyNameLibraryHashSet = new HashSet<>();
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < copyNameLibrary().size(); j++) {
-                if (list.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value1)) {
-                    list.set(i, copyNameLibrary().get(j).value2);
-                    copyNameLibraryHashSet.add(getTxt(list));
-                    copyNameLibraryHashSet.addAll(generateCopies(list));
-                    list.set(i, arr[i]);
-                }
-                if (list.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value2)) {
-                    list.set(i, copyNameLibrary().get(j).value1);
-                    copyNameLibraryHashSet.add(getTxt(list));
-                    copyNameLibraryHashSet.addAll(generateCopies(list));
-                    list.set(i, arr[i]);
-                }
-
-            }
-        }
-
-        nameLibrary.addAll(copyNameLibraryHashSet);
+        return words;
     }
 
-    private static ArrayList<String> generateCopies(ArrayList<String> list) {
-        ArrayList<String> arr = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
+    private static ArrayList<String> generateCopies(String word) {
+        ArrayList<String> copies = new ArrayList<>();
+
+        ArrayList<String> listChars = new ArrayList<>();
+        for (int i = 0; i < word.length(); i++) {
+            listChars.add(String.valueOf(word.charAt(i)));
+        }
+
+        Set<String> hashSet = new HashSet<>();
+
+        for (int i = 0; i < listChars.size(); i++) {
             for (int j = 0; j < copyNameLibrary().size(); j++) {
-                if (list.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value1)) {
-                    list.set(i, copyNameLibrary().get(j).value2);
-                    arr.add(getTxt(list));
-                    list.set(i, copyNameLibrary().get(j).value1);
-                }
-                if (list.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value2)) {
-                    list.set(i, copyNameLibrary().get(j).value1);
-                    arr.add(getTxt(list));
-                    list.set(i, copyNameLibrary().get(j).value2);
+                if (listChars.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value1)) {
+                    listChars.set(i, copyNameLibrary().get(j).value2);
+                    hashSet.add(getTxt(listChars));
+                    //copies.add(getTxt(listChars));
+
+                    for (int k = 0; k < listChars.size(); k++) {
+                        for (int l = 0; l < copyNameLibrary().size(); l++) {
+                            if (listChars.get(k).equalsIgnoreCase(copyNameLibrary().get(l).value1)) {
+                                listChars.set(k, copyNameLibrary().get(l).value2);
+                                hashSet.add(getTxt(listChars));
+                                //copies.add(getTxt(listChars));
+                                listChars.set(k, copyNameLibrary().get(l).value1);
+                            }
+                        }
+                    }
+                    listChars.set(i, copyNameLibrary().get(j).value1);
                 }
             }
         }
 
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < listChars.size(); i++) {
             for (int j = 0; j < copyNameLibrary().size(); j++) {
-                if (list.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value1)) {
-                    list.set(i, copyNameLibrary().get(j).value2);
+                if (listChars.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value2)) {
+                    listChars.set(i, copyNameLibrary().get(j).value1);
+                    hashSet.add(getTxt(listChars));
+                    //copies.add(getTxt(listChars));
+
+                    for (int k = 0; k < listChars.size(); k++) {
+                        for (int l = 0; l < copyNameLibrary().size(); l++) {
+                            if (listChars.get(k).equalsIgnoreCase(copyNameLibrary().get(l).value2)) {
+                                listChars.set(k, copyNameLibrary().get(l).value1);
+                                hashSet.add(getTxt(listChars));
+                                //copies.add(getTxt(listChars));
+                                listChars.set(k, copyNameLibrary().get(l).value2);
+                            }
+                        }
+                    }
+
+                    listChars.set(i, copyNameLibrary().get(j).value2);
                 }
-                arr.add(getTxt(list));
-            }
-        }
-        for (int i = 0; i < list.size(); i++) {
-            for (int j = 0; j < copyNameLibrary().size(); j++) {
-                if (list.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value2)) {
-                    list.set(i, copyNameLibrary().get(j).value1);
-                }
-                arr.add(getTxt(list));
             }
         }
 
-        return arr;
+
+        for (int i = 0; i < listChars.size(); i++) {
+            for (int j = 0; j < copyNameLibrary().size(); j++) {
+                if (listChars.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value1)) {
+                    listChars.set(i, copyNameLibrary().get(j).value2);
+                    hashSet.add(getTxt(listChars));
+                    //copies.add(getTxt(listChars));
+
+                    for (int k = 0; k < listChars.size(); k++) {
+                        for (int l = 0; l < copyNameLibrary().size(); l++) {
+                            if (listChars.get(k).equalsIgnoreCase(copyNameLibrary().get(l).value1)) {
+                                listChars.set(k, copyNameLibrary().get(l).value2);
+                                hashSet.add(getTxt(listChars));
+                                //copies.add(getTxt(listChars));
+                                listChars.set(k, copyNameLibrary().get(l).value1);
+                            }
+                        }
+                    }
+                    //listChars.set(i, copyNameLibrary().get(j).value1);
+                }
+            }
+        }
+
+        for (int i = 0; i < listChars.size(); i++) {
+            for (int j = 0; j < copyNameLibrary().size(); j++) {
+                if (listChars.get(i).equalsIgnoreCase(copyNameLibrary().get(j).value2)) {
+                    listChars.set(i, copyNameLibrary().get(j).value1);
+                    hashSet.add(getTxt(listChars));
+                    //copies.add(getTxt(listChars));
+
+                    for (int k = 0; k < listChars.size(); k++) {
+                        for (int l = 0; l < copyNameLibrary().size(); l++) {
+                            if (listChars.get(k).equalsIgnoreCase(copyNameLibrary().get(l).value2)) {
+                                listChars.set(k, copyNameLibrary().get(l).value1);
+                                hashSet.add(getTxt(listChars));
+                                //copies.add(getTxt(listChars));
+                                listChars.set(k, copyNameLibrary().get(l).value2);
+                            }
+                        }
+                    }
+                    //listChars.set(i, copyNameLibrary().get(j).value2);
+                }
+            }
+        }
+
+
+        copies.addAll(hashSet);
+        return copies;
     }
 
     static String getTxt(ArrayList<String> list) {
@@ -169,14 +231,56 @@ public class Search {
     }
 
     public void startSearch(String protocol, String host, int frequency, String title, String sDate) {
+        System.out.println("Prepare...");
+        writeProgress("Prepare", sDate);
+
         ArrayList<String> mainTitle = new ArrayList<>();
         mainTitle = replaceTitles(title);
 
         double step = 0;
         int temp = -1;
 
-        loadNameLibrary(host);
-        double all = protocolLibrary().size() * nameLibrary.size() * domenLibrary().size();
+        String podDomen = getHostPodDomen(host);
+        String name = getHostName(host);
+
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> podDomens = new ArrayList<>();
+
+        System.out.println("Generation 2-nd lvl domens");
+        writeProgress("Generation 2-nd lvl domens", sDate);
+        nameLibrary.add("www" + name);
+        nameLibrary.add(name);
+        if (name.length() == 1) {
+            names.add(name);
+        } else {
+            names.addAll(generateWords(name));
+        }
+        for (int i = 0; i < names.size(); i++) {
+            nameLibrary.addAll(generateCopies(names.get(i)));
+        }
+
+
+
+        if (podDomen != null) {
+            podDomenLibrary.add(podDomen);
+            podDomenLibrary.add("www" + podDomen);
+            System.out.println("Generation poddomens");
+            writeProgress("Generation poddomens", sDate);
+            podDomens.addAll(generateWords(podDomen));
+            for (int i = 0; i < podDomens.size(); i++) {
+                podDomenLibrary.addAll(generateCopies(podDomens.get(i)));
+            }
+        }
+
+        System.out.println(nameLibrary);
+        System.out.println(podDomenLibrary);
+
+        double all;
+        if (podDomenLibrary.size() != 0) {
+            all = protocolLibrary().size() * nameLibrary.size() * podDomenLibrary.size() * domenLibrary().size();
+        } else {
+            all = protocolLibrary().size() * nameLibrary.size() * domenLibrary().size();
+        }
 
         int frq = 1000 / frequency;
         frq = (int) (all / frq);
@@ -187,67 +291,194 @@ public class Search {
         }
 
 
-        for (int i = 0; i < protocolLibrary().size(); i++) {
-            for (int j = 0; j < nameLibrary.size(); j++) {
-                for (int k = 0; k < domenLibrary().size(); k++) {
+        // =======>>> serfing
+        if (podDomenLibrary.size() == 0) {
+            for (int i = 0; i < protocolLibrary().size(); i++) {
+                for (int j = 0; j < nameLibrary.size(); j++) {
+                    for (int k = 0; k < domenLibrary().size(); k++) {
 
-                    int finalI = i;
-                    int finalJ = j;
-                    int finalK = k;
+                        int finalI = i;
+                        int finalJ = j;
+                        int finalK = k;
 
-                    try {
-                        Thread.sleep(frequency);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                        try {
+                            Thread.sleep(frequency);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                    int finalStep = (int) step;
-                    ArrayList<String> finalMainTitle = mainTitle;
-                    Thread th = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Inetwork inetwork = new Inetwork();
-                            inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
+                        int finalStep = (int) step;
+                        ArrayList<String> finalMainTitle = mainTitle;
+                        Thread th = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Inetwork inetwork = new Inetwork();
+                                inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
 
-                            if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
-                                //System.out.println("Найден: " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode());
-                                suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
-                                if (inetwork.getTitle().equalsIgnoreCase(title)) {
-                                    discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
-                                }
+                                if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
+                                    suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                    if (inetwork.getTitle().equalsIgnoreCase(title)) {
+                                        discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                    }
 
-                                ArrayList<String> inetTitle = new ArrayList<>();
-                                inetTitle = replaceTitles(inetwork.getTitle());
+                                    ArrayList<String> inetTitle = new ArrayList<>();
+                                    inetTitle = replaceTitles(inetwork.getTitle());
 
-                                for (int l = 0; l < finalMainTitle.size(); l++) {
-                                    for (int m = 0; m < inetTitle.size(); m++) {
-                                        if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m))) {
-                                            discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                    for (int l = 0; l < finalMainTitle.size(); l++) {
+                                        for (int m = 0; m < inetTitle.size(); m++) {
+                                            if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m))) {
+                                                discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                            }
                                         }
                                     }
                                 }
+                                writeLog(finalStep + ": " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
                             }
-                            writeLog(finalStep + ": " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                        });
+                        th.start();
+
+                        step++;
+                        double percent = (step / all);
+                        percent = percent * 100;
+
+                        if ((int) (percent) > temp) {
+                            temp = (int) percent;
+                            if (temp != 100) {
+                                System.out.println(temp + "%");
+                                writeProgress(String.valueOf(temp) + "%", sDate);
+                            }
+
                         }
-                    });
-                    th.start();
 
-                    step++;
-                    double percent = (step / all);
-                    percent = percent * 100;
-
-                    if ((int) (percent) > temp) {
-                        temp = (int) percent;
-                        System.out.println(temp + "%");
-                        writePercent(String.valueOf(temp)+"%", sDate);
                     }
-
                 }
             }
+        } else { // если есть поддомен
+
+            ArrayList<String> finalMainTitle1 = mainTitle;
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < protocolLibrary().size(); i++) {
+                        for (int j = 0; j < podDomenLibrary.size(); j++) {
+                            for (int k = 0; k < domenLibrary().size(); k++) {
+
+                                int finalI = i;
+                                int finalJ = j;
+                                int finalK = k;
+
+                                try {
+                                    Thread.sleep(frequency);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                ArrayList<String> finalMainTitle = finalMainTitle1;
+                                Thread th = new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Inetwork inetwork = new Inetwork();
+                                        inetwork.loadPage(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
+
+                                        if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
+                                            suspectFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                            if (inetwork.getTitle().equalsIgnoreCase(title)) {
+                                                discoverFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                            }
+
+                                            ArrayList<String> inetTitle = new ArrayList<>();
+                                            inetTitle = replaceTitles(inetwork.getTitle());
+
+                                            for (int l = 0; l < finalMainTitle.size(); l++) {
+                                                for (int m = 0; m < inetTitle.size(); m++) {
+                                                    if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m))) {
+                                                        discoverFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        writeLog(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                    }
+                                });
+                                th.start();
+                            }
+                        }
+                    }
+                }
+            });
+            thread.start();
+
+            for (int i = 0; i < protocolLibrary().size(); i++) {
+                for (int j = 0; j < nameLibrary.size(); j++) {
+                    for (int k = 0; k < podDomenLibrary.size(); k++) {
+                        for (int l = 0; l < domenLibrary().size(); l++) {
+
+                            try {
+                                Thread.sleep(frequency);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            int finalStep = (int) step;
+                            ArrayList<String> finalMainTitle = mainTitle;
+
+                            int finalI = i;
+                            int finalJ = j;
+                            int finalK = k;
+                            int finalL = l;
+                            Thread th = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Inetwork inetwork = new Inetwork();
+                                    inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." + domenLibrary().get(finalL));
+
+                                    if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
+                                        suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." +  domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                        if (inetwork.getTitle().equalsIgnoreCase(title)) {
+                                            discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." +  domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                        }
+
+                                        ArrayList<String> inetTitle = new ArrayList<>();
+                                        inetTitle = replaceTitles(inetwork.getTitle());
+
+                                        for (int l = 0; l < finalMainTitle.size(); l++) {
+                                            for (int m = 0; m < inetTitle.size(); m++) {
+                                                if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m))) {
+                                                    discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." +  domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    writeLog(finalStep + ": " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." +  domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                }
+                            });
+                            th.start();
+
+                            step++;
+                            double percent = (step / all);
+                            percent = percent * 100;
+
+                            if ((int) (percent) > temp) {
+                                temp = (int) percent;
+                                if (temp != 100) {
+                                    System.out.println(temp + "%");
+                                    writeProgress(String.valueOf(temp) + "%", sDate);
+                                }
+
+                            }
+
+
+                        }
+                    }
+                }
+            }
+
         }
+        // <<<====== serfing
+
     }
 
-    private void writePercent(String txt, String date) {
+    private void writeProgress(String txt, String date) {
         try {
             File folder = new File(date + "//");
             if (!folder.exists()) {
@@ -376,10 +607,33 @@ public class Search {
     }
 
     private static String getHostName(String host) {
-        return host.substring(0, host.lastIndexOf("."));
+        return host.substring(0, host.indexOf("."));
     }
 
-    private ArrayList<String> nameLibrary = new ArrayList<>();
+    private static String getHostPodDomen(String host) {
+        int temp = 0;
+        for (int i = 0; i < host.length(); i++) {
+            if (host.charAt(i) == '.') {
+                temp++;
+            }
+        }
+        if (temp == 1) {
+            return null;
+        } else {
+            for (int i = 0; i < host.length(); i++) {
+                if (host.charAt(i) == '.') {
+                    temp = i;
+                    break;
+                }
+            }
+            return host.substring(temp + 1, host.lastIndexOf("."));
+        }
+
+    }
+
+    private static ArrayList<String> nameLibrary = new ArrayList<>();
+
+    private static ArrayList<String> podDomenLibrary = new ArrayList<>();
 
     private static ArrayList<CopyName> copyNameLibrary() {
         ArrayList<CopyName> values = new ArrayList<>();
@@ -396,6 +650,10 @@ public class Search {
         values.add(new CopyName("m", "n")); // M-N
         values.add(new CopyName("m", "nn")); // M-NN
         values.add(new CopyName("g", "9")); // G-9
+        values.add(new CopyName("g", "q")); // G-Q
+        values.add(new CopyName("q", "9")); // Q-9
+        values.add(new CopyName("f", "ph")); // F-PH
+        values.add(new CopyName("c", "k")); // C-K
 
         return values;
     }

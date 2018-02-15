@@ -14,13 +14,16 @@ public class MainClass {
 
     public static void main(String[] args) {
 
-        String addres = args[0];
+        /*String addres = args[0];
         int frequency = Integer.parseInt(args[1]);
-        final String sDate = args[2];
+        final String sDate = args[2];*/
 
-        /*String addres = "https://ya.ru";
-        int frequency = 150 ;
-        final String sDate = "D:/asd";*/
+        //String addres = "https://ya.ru";
+        //String addres = "https://www.google.com";
+        //String addres = "https://m.vk.com";
+        String addres = "https://m.habrahabr.ru";
+        int frequency = 100;
+        final String sDate = "D:/asd";
 
         System.out.println(addres + "  (" + frequency + " links/second)");
         int thCount = Thread.activeCount();
@@ -46,6 +49,8 @@ public class MainClass {
 
             while (Thread.activeCount() > thCount) {
             }
+            System.out.println("100%");
+            writePercent("100%", sDate);
             endTime = (int) System.currentTimeMillis();
             updateDiscoverSitesFile(sDate, addres);
 
@@ -72,7 +77,7 @@ public class MainClass {
                     //ok
                 }
             }
-            File file = new File(folder, "/discoverSites.txt");
+            File file = new File(folder, "discoverSites.txt");
             if (!file.exists()) {
                 file.createNewFile();
                 FileOutputStream fileOutputStream = new FileOutputStream(file, false);
@@ -83,10 +88,41 @@ public class MainClass {
                 bw.close();
 
             } else {
-                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
                 BufferedWriter bw = new BufferedWriter(outputStreamWriter);
                 bw.write(txt);
+                bw.flush();
+                bw.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void writePercent(String txt, String date) {
+        try {
+            File folder = new File(date + "//");
+            if (!folder.exists()) {
+                boolean created = folder.mkdir();
+                if (created) {
+                    //ok
+                }
+            }
+            File file = new File(folder, "progress.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
+                bw.flush();
+                bw.close();
+            } else {
+                FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                BufferedWriter bw = new BufferedWriter(outputStreamWriter);
+                bw.write(txt + "\r\n");
                 bw.flush();
                 bw.close();
             }
@@ -106,27 +142,35 @@ public class MainClass {
                     //ok
                 }
             }
-            BufferedReader br = new BufferedReader(new FileReader(folder + "/discoverSites.txt"));
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (!line.startsWith(mainSite)) {
-                    arr.add(line);
+            File file = new File(folder, "discoverSites.txt");
+            if (file.exists()) {
+                BufferedReader br = new BufferedReader(new FileReader(folder.getAbsolutePath() + "/discoverSites.txt"));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.startsWith(mainSite)) {
+                        arr.add(line);
+                    }
+                }
+                br.close();
+                list.addAll(arr);
+            }
+
+            if (!folder.exists()) {
+                boolean created = folder.mkdir();
+                if (created) {
+                    //ok
                 }
             }
-            br.close();
-            list.addAll(arr);
-
-            File file = new File(folder + "/discoverSites.txt");
             if (!file.exists()) {
                 file.createNewFile();
                 FileOutputStream fileOutputStream = new FileOutputStream(file, false);
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
                 BufferedWriter bw = new BufferedWriter(outputStreamWriter);
                 for (int i = 0; i < list.size(); i++) {
-                    bw.write(list.get(i) + "\r\n");
+                    bw.write(list.get(i)+"\r\n");
                     bw.flush();
-                    bw.close();
                 }
+                bw.close();
             } else {
                 file.delete();
                 file.createNewFile();
@@ -136,8 +180,8 @@ public class MainClass {
                 for (int i = 0; i < list.size(); i++) {
                     bw.write(list.get(i) + "\r\n");
                     bw.flush();
-                    bw.close();
                 }
+                bw.close();
             }
         } catch (IOException e) {
             e.printStackTrace();

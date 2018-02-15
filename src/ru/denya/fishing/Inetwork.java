@@ -74,7 +74,7 @@ public class Inetwork {
 
                     conn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
                     conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
-
+                    conn.setInstanceFollowRedirects(true);
                     conn.setConnectTimeout(5000);
                     conn.setReadTimeout(5000);
                     conn.connect();
