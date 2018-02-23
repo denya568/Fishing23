@@ -1,81 +1,77 @@
 package ru.denya.fishing;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Scanner;
+import java.io.IOException;
 
 public class Fuck {
     public static void main(String[] args) {
 
-        /*for (int i = 0; i < protocolLibrary().size(); i++) {
-            for (int j = 0; j < nameLibrary.size(); j++) {
-                for (int k = 0; k < domenLibrary().size(); k++) {
-                    for (int l = 0; l < podDomenLibrary.size(); l++) {
+        File file1 = new File("D:\\1.jpg");
+        File file2 = new File("D:\\2.jpg");
+        int count1 = 0;
+        int count2 = 0;
 
+        try {
+            BufferedImage image1 = ImageIO.read(file1);
+            BufferedImage image2 = ImageIO.read(file2);
+
+            int width1 = image1.getWidth();
+            int height1 = image1.getHeight();
+
+            int width2 = image2.getWidth();
+            int height2 = image2.getHeight();
+
+            int maxCount1 = width1 * height1;
+            int maxCount2 = width2 * height2;
+
+            int rgb1;
+            int rgb1P;
+
+            int rgb2;
+            int rgb2P;
+
+            for (int i = 0; i < width1; i++) {
+                for (int j = 0; j < height1 - 1; j++) {
+                    rgb1 = image1.getRGB(i, j);
+                    rgb1P = image1.getRGB(i, j + 1);
+
+                    if (rgb1 != rgb1P) {
+                        count1++;
                     }
-
-                    int finalI = i;
-                    int finalJ = j;
-                    int finalK = k;
-
-                    try {
-                        Thread.sleep(frequency);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    int finalStep = (int) step;
-                    ArrayList<String> finalMainTitle = mainTitle;
-                    Thread th = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Inetwork inetwork = new Inetwork();
-                            inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
-
-                            if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
-                                suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
-                                if (inetwork.getTitle().equalsIgnoreCase(title)) {
-                                    discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
-                                }
-
-                                ArrayList<String> inetTitle = new ArrayList<>();
-                                inetTitle = replaceTitles(inetwork.getTitle());
-
-                                for (int l = 0; l < finalMainTitle.size(); l++) {
-                                    for (int m = 0; m < inetTitle.size(); m++) {
-                                        if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m))) {
-                                            discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
-                                        }
-                                    }
-                                }
-                            }
-                            writeLog(finalStep + ": " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
-                        }
-                    });
-                    th.start();
-
-                    step++;
-                    double percent = (step / all);
-                    percent = percent * 100;
-
-                    if ((int) (percent) > temp) {
-                        temp = (int) percent;
-                        if (temp != 100) {
-                            System.out.println(temp + "%");
-                            writeProgress(String.valueOf(temp) + "%", sDate);
-                        }
-
-                    }
-
                 }
             }
-        }*/
+            int dif1;
+            dif1 = maxCount1 / 100;
+            dif1 = count1 / dif1;
 
+
+            for (int i = 0; i < width2; i++) {
+                for (int j = 0; j < height2 - 1; j++) {
+                    rgb2 = image2.getRGB(i, j);
+                    rgb2P = image2.getRGB(i, j + 1);
+
+                    if (rgb2 != rgb2P) {
+                        count2++;
+                    }
+                }
+            }
+            int dif2;
+            dif2 = maxCount2 / 100;
+            dif2 = count2 / dif2;
+
+            System.out.println("Разница: " + (dif2 - dif1));
+
+            if (dif2 - dif1 == 0 || dif2 - dif1 <= 2) {
+                System.out.println("Одинаковые");
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

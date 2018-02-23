@@ -191,8 +191,6 @@ public class Search {
                 }
             }
         }
-
-
         copies.addAll(hashSet);
         return copies;
     }
@@ -230,7 +228,7 @@ public class Search {
         return titles;
     }
 
-    public void startSearch(String protocol, String host, int frequency, String title, String sDate) {
+    public void startSearch(String protocol, String host, int frequency, String title, String content, String sDate, int critic) {
         System.out.println("Prepare...");
         writeProgress("Prepare", sDate);
 
@@ -259,8 +257,6 @@ public class Search {
             nameLibrary.addAll(generateCopies(names.get(i)));
         }
 
-
-
         if (podDomen != null) {
             podDomenLibrary.add(podDomen);
             podDomenLibrary.add("www" + podDomen);
@@ -271,9 +267,6 @@ public class Search {
                 podDomenLibrary.addAll(generateCopies(podDomens.get(i)));
             }
         }
-
-        System.out.println(nameLibrary);
-        System.out.println(podDomenLibrary);
 
         double all;
         if (podDomenLibrary.size() != 0) {
@@ -312,13 +305,16 @@ public class Search {
                         Thread th = new Thread(new Runnable() {
                             @Override
                             public void run() {
+
                                 Inetwork inetwork = new Inetwork();
                                 inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
 
+
                                 if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
-                                    suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
-                                    if (inetwork.getTitle().equalsIgnoreCase(title)) {
-                                        discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                    CheckContent checkContent = new CheckContent(content, inetwork.getTxt(), critic);
+                                    //suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                    if (inetwork.getTitle().equalsIgnoreCase(title) || checkContent.getCount() > 0) {
+                                        discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getTitle() + " (" + checkContent.getCount() + " совпадений)", sDate);
                                     }
 
                                     ArrayList<String> inetTitle = new ArrayList<>();
@@ -327,7 +323,10 @@ public class Search {
                                     for (int l = 0; l < finalMainTitle.size(); l++) {
                                         for (int m = 0; m < inetTitle.size(); m++) {
                                             if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m))) {
-                                                discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                                suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getTitle() + " (" + checkContent.getCount() + " совпадений)", sDate);
+                                            }
+                                            if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m)) && checkContent.getCount() > 0) {
+                                                discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getTitle() + " (" + checkContent.getCount() + " совпадений)", sDate);
                                             }
                                         }
                                     }
@@ -381,9 +380,10 @@ public class Search {
                                         inetwork.loadPage(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK));
 
                                         if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
-                                            suspectFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
-                                            if (inetwork.getTitle().equalsIgnoreCase(title)) {
-                                                discoverFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                            CheckContent checkContent = new CheckContent(content, inetwork.getTxt(), critic);
+                                            //suspectFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                            if (inetwork.getTitle().equalsIgnoreCase(title) || checkContent.getCount() > 0) {
+                                                discoverFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getTitle() + " (" + checkContent.getCount() + " совпадений)", sDate);
                                             }
 
                                             ArrayList<String> inetTitle = new ArrayList<>();
@@ -392,7 +392,10 @@ public class Search {
                                             for (int l = 0; l < finalMainTitle.size(); l++) {
                                                 for (int m = 0; m < inetTitle.size(); m++) {
                                                     if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m))) {
-                                                        discoverFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                                        suspectFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getTitle() + " (" + checkContent.getCount() + " совпадений)", sDate);
+                                                    }
+                                                    if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m)) && checkContent.getCount() > 0) {
+                                                        discoverFile(protocolLibrary().get(finalI) + "://" + podDomenLibrary.get(finalJ) + "." + domenLibrary().get(finalK) + " - " + inetwork.getTitle() + " (" + checkContent.getCount() + " совпадений)", sDate);
                                                     }
                                                 }
                                             }
@@ -433,9 +436,10 @@ public class Search {
                                     inetwork.loadPage(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." + domenLibrary().get(finalL));
 
                                     if (!inetwork.getResponceCode().equalsIgnoreCase("404")) {
-                                        suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." +  domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
-                                        if (inetwork.getTitle().equalsIgnoreCase(title)) {
-                                            discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." +  domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                        CheckContent checkContent = new CheckContent(content, inetwork.getTxt(), critic);
+                                        //suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." +  domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                        if (inetwork.getTitle().equalsIgnoreCase(title) || checkContent.getCount() > 0) {
+                                            discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." + domenLibrary().get(finalL) + " - " + inetwork.getTitle() + " (" + checkContent.getCount() + " совпадений)", sDate);
                                         }
 
                                         ArrayList<String> inetTitle = new ArrayList<>();
@@ -444,12 +448,15 @@ public class Search {
                                         for (int l = 0; l < finalMainTitle.size(); l++) {
                                             for (int m = 0; m < inetTitle.size(); m++) {
                                                 if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m))) {
-                                                    discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." +  domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                                    suspectFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." + domenLibrary().get(finalL) + " - " + inetwork.getTitle() + " (" + checkContent.getCount() + " совпадений)", sDate);
+                                                }
+                                                if (finalMainTitle.get(l).equalsIgnoreCase(inetTitle.get(m)) && checkContent.getCount() > 0) {
+                                                    discoverFile(protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." + domenLibrary().get(finalL) + " - " + inetwork.getTitle() + " (" + checkContent.getCount() + " совпадений)", sDate);
                                                 }
                                             }
                                         }
                                     }
-                                    writeLog(finalStep + ": " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." +  domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
+                                    writeLog(finalStep + ": " + protocolLibrary().get(finalI) + "://" + nameLibrary.get(finalJ) + "." + podDomenLibrary.get(finalK) + "." + domenLibrary().get(finalL) + " - " + inetwork.getResponceCode() + " (" + inetwork.getTitle() + ")", sDate);
                                 }
                             });
                             th.start();

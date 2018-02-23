@@ -14,16 +14,18 @@ public class MainClass {
 
     public static void main(String[] args) {
 
-        /*String addres = args[0];
+        String addres = args[0];
         int frequency = Integer.parseInt(args[1]);
-        final String sDate = args[2];*/
+        final String sDate = args[2];
+        int critic = Integer.parseInt(args[3]);
 
-        //String addres = "https://ya.ru";
+        /*String addres = "https://ya.ru";
         //String addres = "https://www.google.com";
         //String addres = "https://m.vk.com";
-        String addres = "https://m.habrahabr.ru";
-        int frequency = 100;
+        //String addres = "https://m.habrahabr.ru";
+        int frequency = 20;
         final String sDate = "D:/asd";
+        int critic = 2;*/
 
         System.out.println(addres + "  (" + frequency + " links/second)");
         int thCount = Thread.activeCount();
@@ -45,7 +47,7 @@ public class MainClass {
             System.out.println(line() + " Поиск фишиг-сайтов " + line());
 
             Search search = new Search();
-            search.startSearch(protocol, host, frequency, title, sDate);
+            search.startSearch(protocol, host, frequency, title, inetwork.getTxt(), sDate, critic);
 
             while (Thread.activeCount() > thCount) {
             }
@@ -161,25 +163,32 @@ public class MainClass {
                     //ok
                 }
             }
+
+
             if (!file.exists()) {
                 file.createNewFile();
                 FileOutputStream fileOutputStream = new FileOutputStream(file, false);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                //OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
                 BufferedWriter bw = new BufferedWriter(outputStreamWriter);
-                for (int i = 0; i < list.size(); i++) {
-                    bw.write(list.get(i)+"\r\n");
-                    bw.flush();
-                }
+                bw.write("Фишинговых сайтов не обнаружено");
+                bw.flush();
                 bw.close();
             } else {
                 file.delete();
                 file.createNewFile();
                 FileOutputStream fileOutputStream = new FileOutputStream(file, true);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                //OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
                 BufferedWriter bw = new BufferedWriter(outputStreamWriter);
-                for (int i = 0; i < list.size(); i++) {
-                    bw.write(list.get(i) + "\r\n");
+                if (list.size() == 0) {
+                    bw.write("Фишинговых сайтов не обнаружено");
                     bw.flush();
+                } else {
+                    for (int i = 0; i < list.size(); i++) {
+                        bw.write(list.get(i) + "\r\n");
+                        bw.flush();
+                    }
                 }
                 bw.close();
             }
